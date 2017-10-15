@@ -19,6 +19,17 @@ class ViewController: UIViewController, UITextFieldDelegate {
         createButton();
         // Do any additional setup after loading the view, typically from a nib.
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated);
+        let itemToShare = [
+            "item1",
+            "item2",
+            "item3",
+        ];
+        let activityController = UIActivityViewController(activityItems: itemToShare, applicationActivities: [StringReverseActivity()]);
+        present(activityController, animated: true, completion: nil);
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
@@ -58,9 +69,61 @@ class ViewController: UIViewController, UITextFieldDelegate {
             present(alertController,animated: true, completion: nil);
             return;
         }
-        let activityViewController = UIActivityViewController(activityItems: [textField.text! as NSString],applicationActivities: nil);
+        let activityViewController = UIActivityViewController(activityItems: [textField.text! as String],applicationActivities: [StringReverseActivity()]);
         present(activityViewController, animated: true, completion: {});
     }
 
 }
+
+class StringReverseActivity: UIActivity{
+    var items = [String]();
+    override var activityType: UIActivityType?{
+        return UIActivityType(rawValue: StringReverseActivity.self.description());
+    }
+    override var activityTitle: String?{
+        return "reverse String";
+    }
+    override var activityImage: UIImage?{
+        return UIImage(named: "reverse")!;
+    }
+    
+//    override class var activityCategory: UIActivityCategory {
+//        return .action
+//    }
+    override func canPerform(withActivityItems activityItems: [Any]) -> Bool {
+        for item in activityItems{
+            if(item is String){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    override func prepare(withActivityItems activityItems: [Any]) {
+        for item in activityItems{
+            if(item is String){
+                items.append(item as! String);
+            }
+        }
+    }
+    override func perform() {
+        var reversedString = "";
+        for string in items{
+            reversedString += reverseOfString(string) + "\n";
+        }
+        print(reversedString);
+    }
+    func reverseOfString(_ string:String) -> String{
+        var result = "";
+        var characters = [Character]();
+        for character in string {
+            characters.append(character);
+        }
+        for character in characters.reversed(){
+            result += "\(character)";
+        }
+        return result;
+    }
+}
+
 
